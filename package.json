@@ -1,11 +1,10 @@
 {
   "name": "aion-supabase-edge",
   "version": "1.0.0",
-  "description": "Funciones Edge de Firebase",
+  "description": "Funciones Edge de Supabase",
   "main": "index.js",
   "scripts": {
-    "test": "npm run dev",
-    "dev": "cross-env PUPPETEER_SKIP_DOWNLOAD=true npm install puppeteer"
+    "test": "npm run dev"
   },
   "author": "Manuel Pereira",
   "license": "ISC",
