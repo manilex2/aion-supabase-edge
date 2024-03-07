@@ -1,0 +1,110 @@
+html(lang="es")
+html
+  head
+    meta(charset="utf-8")
+    title Acta de Entrega Recepción
+    style.
+      body {
+        margin: 20px;
+      }
+      .header-1 {
+        font-size: 20px;
+        text-align: center;
+        margin-bottom: 50px;
+        font-weight: bolder;
+      }
+      .header-2 {
+        font-size: 16px;
+        margin-top: 30px;
+        font-weight: bolder;
+      }
+      .flex-container {
+        display: flex;
+        flex-direction: row;
+      }
+  
+      .flex-item-left, .flex-item-rigth {
+        margin: 5px;
+        width: 50%;
+      }
+  
+      li.flex-item-rigth {
+        list-style-type: none;
+        margin: 0px 0px 10px 0px;
+      }
+
+      .flex-container ul {
+        margin: 0px;
+        padding: 0px;
+        width: 50%;
+      }
+
+      .paragraph-1 {
+        text-align: justify;
+        margin-bottom: 30px;
+      }
+  body
+    h1(class="header-1") ACTA DE ENTREGA RECEPCIÓN #{aer.type}
+    div(class="flex-container")
+      p(class="flex-item-left") Fecha de suscripción:
+      p(class="flex-item-rigth") #{contracts.subscriptionDate.day}-#{contracts.subscriptionDate.month}-#{contracts.subscriptionDate.year}
+    div(class="flex-container")
+      p(class="flex-item-left") Contratante:
+      p(class="flex-item-rigth") #{institution.nombre}
+    div(class="flex-container")
+      p(class="flex-item-left") Número de #{parameter.docType}:
+      p(class="flex-item-rigth") #{contracts.number}
+    div(class="flex-container")
+      p(class="flex-item-left") Objeto contractual:
+      p(class="flex-item-rigth") #{contracts.object}
+    div(class="flex-container")
+      p(class="flex-item-left") Monto:
+      p(class="flex-item-rigth") $#{contracts.value}
+    div(class="flex-container")
+      p(class="flex-item-left") Plazo:
+      p(class="flex-item-rigth") #{contracts.term} días
+    div(class="flex-container")
+      p(class="flex-item-left") Administrador del Contrato:
+      p(class="flex-item-rigth") #{adminContract.firstname} #{adminContract.lastname}
+    div(class="flex-container")
+      p(class="flex-item-left") Técnico no interviniente:
+      p(class="flex-item-rigth") #{tecnicoNoInterviniente.firstname} #{tecnicoNoInterviniente.lastname}
+    div(class="flex-container")
+      p(class="flex-item-left") Comisión de Recepción:
+      ul
+        each key in comisionRecepcion
+          li(class="flex-item-rigth") #{key.firstname} #{key.lastname}
+    div(class="flex-container")
+      p(class="flex-item-left") Contratista:
+      p(class="flex-item-rigth") #{contractorsShareholders.name}
+    div(class="flex-container")
+      p(class="flex-item-left") Dirección responsable:
+      p(class="flex-item-rigth") #{departments.nombre}
+    div(class="flex-container")
+      p(class="flex-item-left") Inicio del contrato:
+      p(class="flex-item-rigth") #{contracts.startDate}
+    div(class="flex-container")
+      p(class="flex-item-left") Fecha de finalización estimada:
+      p(class="flex-item-rigth") #{contracts.endDate}
+    div(class="flex-container")
+      p(class="flex-item-left") Entregas programadas:
+      p(class="flex-item-rigth") #{contractsDeliveries.total} entregas
+    div(class="flex-container")
+      p(class="flex-item-left") Porcentaje de anticipo:
+      p(class="flex-item-rigth") #{contracts.advancePercentage}%
+    div(class="flex-container")
+      if contracts.retentionType === "Valor"
+        p(class="flex-item-left") Monto de retención de garantía:
+        p(class="flex-item-rigth") $#{contracts.retentionValue}
+      else
+        p(class="flex-item-left") Porcentaje de retención de garantía:
+        p(class="flex-item-rigth") #{contracts.retentionValue}%
+    h2(class="header-2") 1. ANTECEDENTES
+    p(class="paragraph-1") Con fecha #{contracts.subscriptionDate.day} de #{contracts.subscriptionDate.month} del #{contracts.subscriptionDate.year}, #{institution.nombre}, representada por #{adminContract.firstname} #{adminContract.lastname} en su calidad de #{adminContract.jobPosition}, y #{contractorsShareholders.name} representada por #{contractorsShareholders.legalRepresentative} en su calidad de #{contractorsShareholders.legalRepresentativePosition}, suscribieron el #{parameter.docType} No. #{contracts.number} con objeto #{contracts.object} por el valor de #{contracts.value} más IVA, con un plazo de ejecución de #{contracts.term} días.
+    h2(class="header-2") 2. CONDICIONES GENERALES DE EJECUCIÓN Y CONDICIONES OPERATIVAS
+    if parameter.docType === 'Contrato'
+      p(class="paragraph-1") El contratista, a través del #{parameter.docType} No. #{contracts.number} se comprometió con #{institution.nombre} a ejecutar/entregar #{contracts.object} por el valor #{contracts.value} en los siguientes plazos:
+    else
+    p(class="paragraph-1") El contratista, a través de la #{parameter.docType} No. #{contracts.number} se comprometió con #{institution.nombre} a ejecutar/entregar #{contracts.object} por el valor #{contracts.value} en los siguientes plazos:
+  </body>
+</html>
