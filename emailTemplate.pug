@@ -1,0 +1,13 @@
+html(lang="es")
+html
+  head
+    meta(charset="utf-8")
+    title Correo de Notificación de Vencimiento de Contrato
+  body
+    h1(class="") #{subject}
+    br
+    p(class="") Hola #{userName} le llegó este email porque faltan #{diasRestantes} días para la finalización del contrato #{contractNumber} que finaliza en fecha #{fechaFinalizacion}.
+    br
+    p(class="") Por favor tome las precauciones necesarias.
+    br
+    p(class="") Personal de AION.

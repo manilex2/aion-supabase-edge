@@ -3,56 +3,18 @@ html
   head
     meta(charset="utf-8")
     title Acta de Entrega Recepción
-    style.
-      body {
-        margin: 20px;
-      }
-      .header-1 {
-        font-size: 20px;
-        text-align: center;
-        margin-bottom: 50px;
-        font-weight: bolder;
-      }
-      .header-2 {
-        font-size: 16px;
-        margin-top: 30px;
-        font-weight: bolder;
-      }
-      .flex-container {
-        display: flex;
-        flex-direction: row;
-      }
-  
-      .flex-item-left, .flex-item-rigth {
-        margin: 5px;
-        width: 50%;
-      }
-  
-      li.flex-item-rigth {
-        list-style-type: none;
-        margin: 0px 0px 10px 0px;
-      }
-
-      .flex-container ul {
-        margin: 0px;
-        padding: 0px;
-        width: 50%;
-      }
-
-      .paragraph-1 {
-        text-align: justify;
-        margin-bottom: 30px;
-      }
+    style
+      include ./style.css
   body
-    h1(class="header-1") ACTA DE ENTREGA RECEPCIÓN #{aer.type}
+    h1(class="header-1") ACTA DE ENTREGA RECEPCIÓN #{aerType}
     div(class="flex-container")
       p(class="flex-item-left") Fecha de suscripción:
-      p(class="flex-item-rigth") #{contracts.subscriptionDate.day}-#{contracts.subscriptionDate.month}-#{contracts.subscriptionDate.year}
+      p(class="flex-item-rigth") #{contracts.subscriptionDate.fullDate}
     div(class="flex-container")
       p(class="flex-item-left") Contratante:
       p(class="flex-item-rigth") #{institution.nombre}
     div(class="flex-container")
-      p(class="flex-item-left") Número de #{parameter.docType}:
+      p(class="flex-item-left") Número de #{docType}:
       p(class="flex-item-rigth") #{contracts.number}
     div(class="flex-container")
       p(class="flex-item-left") Objeto contractual:
@@ -88,23 +50,197 @@ html
       p(class="flex-item-rigth") #{contracts.endDate}
     div(class="flex-container")
       p(class="flex-item-left") Entregas programadas:
-      p(class="flex-item-rigth") #{contractsDeliveries.total} entregas
-    div(class="flex-container")
-      p(class="flex-item-left") Porcentaje de anticipo:
-      p(class="flex-item-rigth") #{contracts.advancePercentage}%
-    div(class="flex-container")
-      if contracts.retentionType === "Valor"
-        p(class="flex-item-left") Monto de retención de garantía:
-        p(class="flex-item-rigth") $#{contracts.retentionValue}
-      else
-        p(class="flex-item-left") Porcentaje de retención de garantía:
-        p(class="flex-item-rigth") #{contracts.retentionValue}%
+      p(class="flex-item-rigth") #{delivery.length} entregas
+    if contracts.advancePercentage
+      div(class="flex-container")
+        p(class="flex-item-left") Porcentaje de anticipo:
+        p(class="flex-item-rigth") #{contracts.advancePercentage}%
+    if contracts.retentionValue
+      div(class="flex-container")
+        if contracts.retentionType === "Valor"
+          p(class="flex-item-left") Monto de retención como garantía:
+          p(class="flex-item-rigth") $#{contracts.retentionValue}
+        else
+          p(class="flex-item-left") Porcentaje de retención como garantía:
+          p(class="flex-item-rigth") #{contracts.retentionValue}%
     h2(class="header-2") 1. ANTECEDENTES
-    p(class="paragraph-1") Con fecha #{contracts.subscriptionDate.day} de #{contracts.subscriptionDate.month} del #{contracts.subscriptionDate.year}, #{institution.nombre}, representada por #{adminContract.firstname} #{adminContract.lastname} en su calidad de #{adminContract.jobPosition}, y #{contractorsShareholders.name} representada por #{contractorsShareholders.legalRepresentative} en su calidad de #{contractorsShareholders.legalRepresentativePosition}, suscribieron el #{parameter.docType} No. #{contracts.number} con objeto #{contracts.object} por el valor de #{contracts.value} más IVA, con un plazo de ejecución de #{contracts.term} días.
+    p(class="paragraph-1") Con fecha #{contracts.subscriptionDate.day} de #{contracts.subscriptionDate.month} del #{contracts.subscriptionDate.year}, #{institution.nombre}, representada por #{institution.legalRepresentative.firstname} #{institution.legalRepresentative.lastname} en su calidad de #{institution.legalRepresentative.jobPosition}, y #{contractorsShareholders.name} representada por #{contractorsShareholders.legalRepresentative} en su calidad de #{contractorsShareholders.legalRepresentativePosition}, suscribieron el #{docType} No. #{contracts.number} con objeto #{contracts.object} por el valor de #{contracts.value} más IVA, con un plazo de ejecución de #{contracts.term} días.
     h2(class="header-2") 2. CONDICIONES GENERALES DE EJECUCIÓN Y CONDICIONES OPERATIVAS
-    if parameter.docType === 'Contrato'
-      p(class="paragraph-1") El contratista, a través del #{parameter.docType} No. #{contracts.number} se comprometió con #{institution.nombre} a ejecutar/entregar #{contracts.object} por el valor #{contracts.value} en los siguientes plazos:
+    if docType === 'Contrato'
+      p(class="paragraph-1") El contratista, a través del #{docType} No. #{contracts.number} se comprometió con #{institution.nombre} a ejecutar/entregar #{contracts.object} por el valor #{contracts.value} en los siguientes plazos:
     else
-    p(class="paragraph-1") El contratista, a través de la #{parameter.docType} No. #{contracts.number} se comprometió con #{institution.nombre} a ejecutar/entregar #{contracts.object} por el valor #{contracts.value} en los siguientes plazos:
+      p(class="paragraph-1") El contratista, a través de la #{docType} No. #{contracts.number} se comprometió con #{institution.nombre} a ejecutar/entregar #{contracts.object} por el valor #{contracts.value} en los siguientes plazos:
+    ol(class="order-list-1")
+      each key, index in delivery
+        li(class="") Entrega #{key.deliveryNumber}, con objeto de ejecución #{key.deliveryDetail} con fecha de entrega #{key.deliveryPlannedDate}
+          if key.deliverables.length >= 1
+            span(class="") , con los siguientes entregables:
+          else
+            span(class="") .
+          ol(class="order-list-2")
+            each key in delivery[index].deliverables
+              li(class="item-list-1") #{key.detail}
+    p(class="paragraph-1") Lo cual se entregó de conformidad con el siguiente detalle:
+    ol(class="order-list-1")
+      each key, index in delivery
+        li(class="") Con fecha #{key.deliveryRealDate.day} de #{key.deliveryRealDate.month} del #{key.deliveryRealDate.year} se registró la entrega No. #{key.deliveryNumber}, mediante la cual se hizo entrega de lo siguiente:
+        ol(class="order-list-2")
+          each key in delivery[index].deliverables
+            li(class="item-list-1") #{key.detail}
+        p(class="paragraph-1") Por este concepto se ha cancelado la factura No. #{key.payment.billNumber}, por el monto de #{key.payment.paymentRealValue}
+          if key.penalties.length >= 1
+            span(class="") , descontándose una multa equivalente a #{key.payment.totalPaymentPenaltiesValue}
+          if key.payment.retentionValue
+            span(class="") ; y reteniéndose por concepto de garantía en efectivo un monto de #{key.payment.retentionValue}
+          if key.delayValue > 0
+            span(class="") , en la mencionada entrega se registró un atraso equivalente a #{key.delayValue} días
+          span(class="") .
+    h2(class="header-2") 3. LIQUIDACIÓN DE PLAZOS:
+    div(class="flex-container")
+      p(class="flex-item-left") Fecha firma contrato:
+      p(class="flex-item-rigth") #{contracts.subscriptionDate.fullDate}
+    div(class="flex-container")
+      p(class="flex-item-left") Plazo del contrato:
+      p(class="flex-item-rigth") #{contracts.term} días
+    div(class="flex-container")
+      p(class="flex-item-left") Inicio del plazo contractual:
+      p(class="flex-item-rigth") #{contracts.startDate}
+    div(class="flex-container")
+      p(class="flex-item-left") Fecha de finalición estimada:
+      p(class="flex-item-rigth") #{contracts.endDate}
+    div(class="flex-container")
+      p(class="flex-item-left") Entregas programadas:
+      p(class="flex-item-rigth") #{delivery.length}
+    table(class="table-1")
+      thead
+        th(class="table-item-1") Entrega No.
+        th(class="table-item-1") Entregables
+        th(class="table-item-1") Fecha entrega programada
+        th(class="table-item-1") Fecha entrega real
+        th(class="table-item-1") Días atraso
+      tbody
+        each key, index in delivery
+          tr(class=(index + 1) % 2 === 0? "fila-par" : "fila-impar")
+            td(class="table-item-1") #{index + 1}
+            td(class="table-item-1") 
+              ol(class="order-list-2")
+                each key in delivery[index].deliverables
+                  li(class="item-list-1") #{key.detail}
+            td(class="table-item-1") #{key.deliveryPlannedDate}
+            td(class="table-item-1") #{key.deliveryRealDate.fullDate}
+            td(class="table-item-1") #{key.delayValue? key.delayValue : '-'}
+    p(class="paragraph-1") Total de días de atraso: #{totalDeliveryDelay} días.
+    h2(class="header-2") 4. LIQUIDACIÓN ECONÓMICA O PENDIENTE DE PAGO:
+    div(class="flex-container")
+      p(class="flex-item-left") Fecha firma contrato:
+      p(class="flex-item-rigth") #{contracts.subscriptionDate.fullDate}
+    div(class="flex-container")
+      p(class="flex-item-left") Plazo del contrato:
+      p(class="flex-item-rigth") #{contracts.term} días
+    div(class="flex-container")
+      p(class="flex-item-left") Inicio del plazo contractual:
+      p(class="flex-item-rigth") #{contracts.startDate}
+    div(class="flex-container")
+      p(class="flex-item-left") Fecha de finalición estimada:
+      p(class="flex-item-rigth") #{contracts.endDate}
+    div(class="flex-container")
+      p(class="flex-item-left") Entregas programadas:
+      p(class="flex-item-rigth") #{delivery.length}
+    div(class="flex-container")
+      p(class="flex-item-left") Monto de contrato:
+      p(class="flex-item-rigth") $#{contracts.value}
+    div(class="flex-container")
+      p(class="flex-item-left") Modalidad de Pago:
+      p(class="flex-item-rigth") #{contracts.paymentMode}
+    if contracts.advancePercentage
+      div(class="flex-container")
+        p(class="flex-item-left") Porcentaje de anticipo:
+        p(class="flex-item-rigth") #{contracts.advancePercentage}%
+    if contracts.retentionValue
+      div(class="flex-container")
+        if contracts.retentionType === "Valor"
+          p(class="flex-item-left") Monto de retención como garantía:
+          p(class="flex-item-rigth") $#{contracts.retentionValue}
+        else
+          p(class="flex-item-left") Porcentaje de retención como garantía:
+          p(class="flex-item-rigth") #{contracts.retentionValue}%
+    if contracts.penalty
+      div(class="flex-container")
+        p(class="flex-item-left") Multas:
+        p(class="flex-item-rigth") $#{contracts.penalty}
+    table(class="table-1")
+      thead
+        th(class="table-item-1") Entrega No.
+        th(class="table-item-1") Factura relacionada
+        th(class="table-item-1") Monto cancelado
+        th(class="table-item-1") Fecha de pago
+        th(class="table-item-1") Monto de multa aplicada
+        th(class="table-item-1") Monto retenido como garantía
+      tbody
+        each key, index in delivery
+          tr(class=(index + 1) % 2 === 0? "fila-par" : "fila-impar")
+            td(class="table-item-1") #{index + 1}
+            td(class="table-item-1") #{key.payment.billNumber}
+            td(class="table-item-1") #{key.payment.paymentRealValue}
+            td(class="table-item-1") #{key.payment.paymentRealDate}
+            td(class="table-item-1") #{key.penalties.length >= 1? '$' + key.payment.totalPaymentPenaltiesValue : '-'}
+            td(class="table-item-1") #{key.payment.retentionValue ? '$' + key.payment.retentionValue : '-'} 
+    p(class="paragraph-1") Total de multas aplicadas: $#{totalPenaltiesValue > 0 ? totalPenaltiesValue : 0} dólares de los Estados Unidos de América.
+    p(class="paragraph-1") Fecha de devolución de garantías: #{warrantyReturnDate}.
+    p(class="paragraph-1") Monto a cancelar a favor del contratista: $#{valuePayContractor > 0 ? valuePayContractor : 0} dólares de los Estados Unidos de América.
+    p(class="paragraph-1") Garantía por devolver a favor del contratista: $#{warrantyReturnContractor > 0 ? warrantyReturnContractor : 0} dólares de los Estados Unidos de América.
+    p(class="paragraph-1") Se encuentra pendiente el pago de $#{totalPendingPayment > 0 ? totalPendingPayment : 0} dólares de los Estados Unidos de América por las entregas restantes que constan en el contrato.
+    h2(class="header-2") 5. CONSTANCIA DE RECEPCIÓN Y CUMPLIMIENTO DE OBLIGACIONES CONTRACTUALES:
+    p(class="paragraph-1") A la suscripción de la presente acta, el contratista #{contractorsShareholders.name} representada por #{contractorsShareholders.legalRepresentative}  en su calidad de #{contractorsShareholders.legalRepresentativePosition}
+      if contracts.nature == "Bienes"
+        span(class="") , entrega los bienes 
+      else if contracts.nature == "Servicios"
+        span(class="") , deja constancia de la prestación del servicio 
+      else
+        span(class="") , entrega la obra 
+      if docType == "Contrato"
+        span(class="") el Contrato
+      else if docType == "Orden de Trabajo"
+        span(class="") la Orden de Trabajo
+      else
+        span(class="") la Orden de Compra
+      span(class="") #{contracts.number} con objeto #{contracts.object}, a entera satisfacción de #{institution.nombre}, representada por #{institution.legalRepresentative.firstname} #{institution.legalRepresentative.lastname} en su calidad de #{institution.legalRepresentative.jobPosition} y establece que se han cumplido con las caractererísticas, especificaciones t obligaciones requeridas en 
+        if docType == "Contrato"
+          span(class="") el Contrato
+        else if docType == "Orden de Trabajo"
+          span(class="") la Orden de Trabajo
+        else
+          span(class="") la Orden de Compra
+      span(class="") , de conformidad con el detalle contenidos en los numerales 3 y 4 de  la presente acta.
+    h2(class="header-2") 6. ACEPTACIÓN DE LAS PARTES
+    p(class="paragraph-1") Para constancia de lo señalado, las partes aceptan libre y voluntariamente el contenido del presente documento, declarando que han cumplido con sus obligaciones, de acuerdo con las disposiciones legales y estipulaciones contractuales; para fe y constancia de su aceptación a lo pactado en la presente Acta de Entrega #{aerType}, los comparecientes suscriben el presente instrumento en dos ejemplares del mismo valor y contenido legal en la ciudad de #{institution.city}, el #{contracts.subscriptionDate.day} de #{contracts.subscriptionDate.month} del #{contracts.subscriptionDate.year}.
+    br
+    br
+    br
+    br
+    div(class="flex-container")
+      p(class="flex-item-left") ___________________________________________
+      p(class="flex-item-rigth") ___________________________________________
+    div(class="flex-container")
+      p(class="flex-item-left") #{adminContract.firstname} #{adminContract.lastname}
+        br
+        span(class="") ADMINISTRADOR(A) DEL CONTRATO
+      p(class="flex-item-rigth") #{tecnicoNoInterviniente.firstname} #{tecnicoNoInterviniente.lastname}
+        br
+        span(class="") FUNCIONARIO(A) DELEGADO(A)
+        br
+        span(class="") TÉCNICO NO INTERVINIENTE
+    br
+    br
+    br
+    br
+    div(class="flex-container")
+      p(class="flex-item-left") ___________________________________________
+    div(class="flex-container")
+      p(class="flex-item-left") #{contractorsShareholders.legalRepresentative}
+        br
+        span(class="") CONTRATISTA
+        br
+        span(class="") RUC: #{contractorsShareholders.governmentId}    
   </body>
 </html>
