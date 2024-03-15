@@ -363,6 +363,12 @@ export type Database = {
           id: string
           institution_id: string | null
           link_process: string | null
+          notif_end_contract_1: boolean | null
+          notif_end_contract_2: boolean | null
+          notif_end_contract_3: boolean | null
+          notif_end_contract_date_1: string | null
+          notif_end_contract_date_2: string | null
+          notif_end_contract_date_3: string | null
           notification_date: string | null
           other_delivery_period: string | null
           other_start_date: string | null
@@ -372,6 +378,7 @@ export type Database = {
           penalty: string | null
           planned_execution_budget_current_year: number | null
           planned_execution_budget_total: number | null
+          private_project_id: string | null
           progress_budget_estimated: number | null
           progress_budget_real: number | null
           progress_payments: number | null
@@ -423,6 +430,12 @@ export type Database = {
           id?: string
           institution_id?: string | null
           link_process?: string | null
+          notif_end_contract_1?: boolean | null
+          notif_end_contract_2?: boolean | null
+          notif_end_contract_3?: boolean | null
+          notif_end_contract_date_1?: string | null
+          notif_end_contract_date_2?: string | null
+          notif_end_contract_date_3?: string | null
           notification_date?: string | null
           other_delivery_period?: string | null
           other_start_date?: string | null
@@ -432,6 +445,7 @@ export type Database = {
           penalty?: string | null
           planned_execution_budget_current_year?: number | null
           planned_execution_budget_total?: number | null
+          private_project_id?: string | null
           progress_budget_estimated?: number | null
           progress_budget_real?: number | null
           progress_payments?: number | null
@@ -483,6 +497,12 @@ export type Database = {
           id?: string
           institution_id?: string | null
           link_process?: string | null
+          notif_end_contract_1?: boolean | null
+          notif_end_contract_2?: boolean | null
+          notif_end_contract_3?: boolean | null
+          notif_end_contract_date_1?: string | null
+          notif_end_contract_date_2?: string | null
+          notif_end_contract_date_3?: string | null
           notification_date?: string | null
           other_delivery_period?: string | null
           other_start_date?: string | null
@@ -492,6 +512,7 @@ export type Database = {
           penalty?: string | null
           planned_execution_budget_current_year?: number | null
           planned_execution_budget_total?: number | null
+          private_project_id?: string | null
           progress_budget_estimated?: number | null
           progress_budget_real?: number | null
           progress_payments?: number | null
@@ -568,6 +589,13 @@ export type Database = {
             columns: ["institution_id"]
             isOneToOne: false
             referencedRelation: "institution"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_project_private_id_fkey"
+            columns: ["private_project_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_project"
             referencedColumns: ["id"]
           }
         ]
@@ -784,7 +812,8 @@ export type Database = {
       }
       contracts_deliveries: {
         Row: {
-          contract_id: string | null
+          CO_OT_OC_id: string | null
+          contract_father_id: string | null
           created_at: string
           delay_days: number | null
           delivery_complete: boolean | null
@@ -796,11 +825,15 @@ export type Database = {
           delivery_weight: number | null
           id: string
           payment_id: string | null
+          private_macroproject_id: string | null
+          private_phase_id: string | null
+          private_project_id: string | null
           registrant_user: string | null
           registration_date: string | null
         }
         Insert: {
-          contract_id?: string | null
+          CO_OT_OC_id?: string | null
+          contract_father_id?: string | null
           created_at?: string
           delay_days?: number | null
           delivery_complete?: boolean | null
@@ -812,11 +845,15 @@ export type Database = {
           delivery_weight?: number | null
           id?: string
           payment_id?: string | null
+          private_macroproject_id?: string | null
+          private_phase_id?: string | null
+          private_project_id?: string | null
           registrant_user?: string | null
           registration_date?: string | null
         }
         Update: {
-          contract_id?: string | null
+          CO_OT_OC_id?: string | null
+          contract_father_id?: string | null
           created_at?: string
           delay_days?: number | null
           delivery_complete?: boolean | null
@@ -828,13 +865,16 @@ export type Database = {
           delivery_weight?: number | null
           id?: string
           payment_id?: string | null
+          private_macroproject_id?: string | null
+          private_phase_id?: string | null
+          private_project_id?: string | null
           registrant_user?: string | null
           registration_date?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "deliveries_contract_id_fkey"
-            columns: ["contract_id"]
+            foreignKeyName: "public_contracts_deliveries_contract_father_id_fkey"
+            columns: ["contract_father_id"]
             isOneToOne: false
             referencedRelation: "contracts"
             referencedColumns: ["id"]
@@ -847,6 +887,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "public_contracts_deliveries_private_macroproject_id_fkey"
+            columns: ["private_macroproject_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_macroproject"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_deliveries_private_phase_id_fkey"
+            columns: ["private_phase_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_phases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_deliveries_private_project_id_fkey"
+            columns: ["private_project_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_project"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "public_contracts_deliveries_registrant_user_fkey"
             columns: ["registrant_user"]
             isOneToOne: false
@@ -855,12 +916,12 @@ export type Database = {
           }
         ]
       }
-      contracts_deliveries_frecuency: {
+      contracts_deliveries_frequency: {
         Row: {
           created_at: string
           days: number | null
           default_system: boolean
-          frecuency_type: string | null
+          frequency_type: string | null
           id: string
           months: number | null
           name: string | null
@@ -869,7 +930,7 @@ export type Database = {
           created_at?: string
           days?: number | null
           default_system?: boolean
-          frecuency_type?: string | null
+          frequency_type?: string | null
           id?: string
           months?: number | null
           name?: string | null
@@ -878,7 +939,7 @@ export type Database = {
           created_at?: string
           days?: number | null
           default_system?: boolean
-          frecuency_type?: string | null
+          frequency_type?: string | null
           id?: string
           months?: number | null
           name?: string | null
@@ -1018,6 +1079,7 @@ export type Database = {
       }
       contracts_order_purchase: {
         Row: {
+          advance_percentage: number | null
           amount: number | null
           contract_id: string | null
           contractor_id: string | null
@@ -1027,14 +1089,19 @@ export type Database = {
           delivery_date: string | null
           description: string | null
           id: string
+          modelo: string | null
+          mz: string | null
           order_date: string | null
           order_number: string | null
+          ot_type: string | null
           price_total: number | null
           price_unit: number | null
           shipping_method: string | null
+          solar: string | null
           user_register: string | null
         }
         Insert: {
+          advance_percentage?: number | null
           amount?: number | null
           contract_id?: string | null
           contractor_id?: string | null
@@ -1044,14 +1111,19 @@ export type Database = {
           delivery_date?: string | null
           description?: string | null
           id?: string
+          modelo?: string | null
+          mz?: string | null
           order_date?: string | null
           order_number?: string | null
+          ot_type?: string | null
           price_total?: number | null
           price_unit?: number | null
           shipping_method?: string | null
+          solar?: string | null
           user_register?: string | null
         }
         Update: {
+          advance_percentage?: number | null
           amount?: number | null
           contract_id?: string | null
           contractor_id?: string | null
@@ -1061,11 +1133,15 @@ export type Database = {
           delivery_date?: string | null
           description?: string | null
           id?: string
+          modelo?: string | null
+          mz?: string | null
           order_date?: string | null
           order_number?: string | null
+          ot_type?: string | null
           price_total?: number | null
           price_unit?: number | null
           shipping_method?: string | null
+          solar?: string | null
           user_register?: string | null
         }
         Relationships: [
@@ -1113,7 +1189,12 @@ export type Database = {
           payment_form: string | null
           price: number | null
           priority: string | null
+          private_macroproject_id: string | null
+          private_phase_id: string | null
+          private_project_id: string | null
+          progress: number | null
           service_location: string | null
+          tipo_ot: string | null
           user_register: string | null
         }
         Insert: {
@@ -1129,7 +1210,12 @@ export type Database = {
           payment_form?: string | null
           price?: number | null
           priority?: string | null
+          private_macroproject_id?: string | null
+          private_phase_id?: string | null
+          private_project_id?: string | null
+          progress?: number | null
           service_location?: string | null
+          tipo_ot?: string | null
           user_register?: string | null
         }
         Update: {
@@ -1145,7 +1231,12 @@ export type Database = {
           payment_form?: string | null
           price?: number | null
           priority?: string | null
+          private_macroproject_id?: string | null
+          private_phase_id?: string | null
+          private_project_id?: string | null
+          progress?: number | null
           service_location?: string | null
+          tipo_ot?: string | null
           user_register?: string | null
         }
         Relationships: [
@@ -1169,6 +1260,27 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_private_order_work_private_macroproject_id_fke"
+            columns: ["private_macroproject_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_macroproject"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_private_order_work_private_phase_id_fkey"
+            columns: ["private_phase_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_phases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_private_order_work_private_project_id_fkey"
+            columns: ["private_project_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_project"
+            referencedColumns: ["id"]
           }
         ]
       }
@@ -1177,48 +1289,63 @@ export type Database = {
           aer_id: string | null
           bill_file: string | null
           bill_number: string | null
+          CO_OT_OC_id: string | null
           commets: string | null
-          contract_id: string | null
+          contract_father_id: string | null
           created_at: string
           deliveries_related: boolean | null
+          delivery_id: string | null
           id: string
           other_files: string | null
           payment_planned_date: string | null
           payment_planned_value: number | null
           payment_real_date: string | null
           payment_real_value: number | null
+          private_macroproject_id: string | null
+          private_phases_id: string | null
+          private_project_id: string | null
           retention_value: number | null
         }
         Insert: {
           aer_id?: string | null
           bill_file?: string | null
           bill_number?: string | null
+          CO_OT_OC_id?: string | null
           commets?: string | null
-          contract_id?: string | null
+          contract_father_id?: string | null
           created_at?: string
           deliveries_related?: boolean | null
+          delivery_id?: string | null
           id?: string
           other_files?: string | null
           payment_planned_date?: string | null
           payment_planned_value?: number | null
           payment_real_date?: string | null
           payment_real_value?: number | null
+          private_macroproject_id?: string | null
+          private_phases_id?: string | null
+          private_project_id?: string | null
           retention_value?: number | null
         }
         Update: {
           aer_id?: string | null
           bill_file?: string | null
           bill_number?: string | null
+          CO_OT_OC_id?: string | null
           commets?: string | null
-          contract_id?: string | null
+          contract_father_id?: string | null
           created_at?: string
           deliveries_related?: boolean | null
+          delivery_id?: string | null
           id?: string
           other_files?: string | null
           payment_planned_date?: string | null
           payment_planned_value?: number | null
           payment_real_date?: string | null
           payment_real_value?: number | null
+          private_macroproject_id?: string | null
+          private_phases_id?: string | null
+          private_project_id?: string | null
           retention_value?: number | null
         }
         Relationships: [
@@ -1230,17 +1357,46 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "public_payments_contract_id_fkey"
-            columns: ["contract_id"]
+            foreignKeyName: "public_contracts_payments_contract_father_id_fkey"
+            columns: ["contract_father_id"]
             isOneToOne: false
             referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_payments_delivery_id_fkey"
+            columns: ["delivery_id"]
+            isOneToOne: false
+            referencedRelation: "contracts_deliveries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_payments_private_macroproject_id_fkey"
+            columns: ["private_macroproject_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_macroproject"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_payments_private_phases_id_fkey"
+            columns: ["private_phases_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_phases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_payments_private_project_id_fkey"
+            columns: ["private_project_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_project"
             referencedColumns: ["id"]
           }
         ]
       }
       contracts_payments_penalties: {
         Row: {
-          contract_id: string | null
+          CO_OT_OC_id: string | null
+          contract_father_id: string | null
           created_at: string
           id: string
           payment_id: string | null
@@ -1248,9 +1404,13 @@ export type Database = {
           penalty_detail: string | null
           penalty_file: string | null
           penalty_value: number | null
+          private_macroproject_id: string | null
+          private_phase_id: string | null
+          private_project_id: string | null
         }
         Insert: {
-          contract_id?: string | null
+          CO_OT_OC_id?: string | null
+          contract_father_id?: string | null
           created_at?: string
           id?: string
           payment_id?: string | null
@@ -1258,9 +1418,13 @@ export type Database = {
           penalty_detail?: string | null
           penalty_file?: string | null
           penalty_value?: number | null
+          private_macroproject_id?: string | null
+          private_phase_id?: string | null
+          private_project_id?: string | null
         }
         Update: {
-          contract_id?: string | null
+          CO_OT_OC_id?: string | null
+          contract_father_id?: string | null
           created_at?: string
           id?: string
           payment_id?: string | null
@@ -1268,11 +1432,21 @@ export type Database = {
           penalty_detail?: string | null
           penalty_file?: string | null
           penalty_value?: number | null
+          private_macroproject_id?: string | null
+          private_phase_id?: string | null
+          private_project_id?: string | null
         }
         Relationships: [
           {
+            foreignKeyName: "public_contracts_payments_penalties_contract_father_id_fkey"
+            columns: ["contract_father_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "public_contracts_payments_penalties_contract_id_fkey"
-            columns: ["contract_id"]
+            columns: ["CO_OT_OC_id"]
             isOneToOne: false
             referencedRelation: "contracts"
             referencedColumns: ["id"]
@@ -1282,6 +1456,27 @@ export type Database = {
             columns: ["payment_id"]
             isOneToOne: false
             referencedRelation: "contracts_payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_payments_penalties_private_macroproject_id_fke"
+            columns: ["private_macroproject_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_macroproject"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_payments_penalties_private_phase_id_fkey"
+            columns: ["private_phase_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_phases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_contracts_payments_penalties_private_project_id_fkey"
+            columns: ["private_project_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_project"
             referencedColumns: ["id"]
           }
         ]
@@ -2740,23 +2935,70 @@ export type Database = {
           }
         ]
       }
+      project_budget_catalog: {
+        Row: {
+          budget_category_id: string | null
+          code: string | null
+          created_at: string
+          id: string
+          name: string | null
+          year: number | null
+        }
+        Insert: {
+          budget_category_id?: string | null
+          code?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          year?: number | null
+        }
+        Update: {
+          budget_category_id?: string | null
+          code?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_project_budget_catalog_budget_category_id_fkey"
+            columns: ["budget_category_id"]
+            isOneToOne: false
+            referencedRelation: "project_budget_category"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      project_budget_category: {
+        Row: {
+          created_at: string
+          id: string
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
       project_budget_code: {
         Row: {
           annual_amount: number | null
           bid_funds: string | null
+          budget_catalog_id: string | null
           budget_code_number: string | null
-          budget_item: string | null
           budget_type: string | null
-          c1: string | null
-          c2: string | null
-          c3: string | null
-          cpc_code: number | null
           created_at: string
           department: string | null
           detail_product: string | null
           electronic_catalog: string | null
-          executed_value_delete: number | null
-          extra_values_delete: number | null
           id: string
           product_type: string | null
           project_code: string | null
@@ -2765,28 +3007,25 @@ export type Database = {
           purchase_type: string | null
           regime_type: string | null
           suggested_procedure: string | null
-          total_cost: number | null
-          total_value_delete: number | null
+          term_c1_c2_c3: string | null
+          total_budget_private: number | null
+          total_budget_public: number | null
+          total_certified_value_public: number | null
+          total_executed_private: number | null
+          total_executed_value_public: number | null
           unit: string | null
           unit_cost: number | null
-          year: number | null
         }
         Insert: {
           annual_amount?: number | null
           bid_funds?: string | null
+          budget_catalog_id?: string | null
           budget_code_number?: string | null
-          budget_item?: string | null
           budget_type?: string | null
-          c1?: string | null
-          c2?: string | null
-          c3?: string | null
-          cpc_code?: number | null
           created_at?: string
           department?: string | null
           detail_product?: string | null
           electronic_catalog?: string | null
-          executed_value_delete?: number | null
-          extra_values_delete?: number | null
           id?: string
           product_type?: string | null
           project_code?: string | null
@@ -2795,28 +3034,25 @@ export type Database = {
           purchase_type?: string | null
           regime_type?: string | null
           suggested_procedure?: string | null
-          total_cost?: number | null
-          total_value_delete?: number | null
+          term_c1_c2_c3?: string | null
+          total_budget_private?: number | null
+          total_budget_public?: number | null
+          total_certified_value_public?: number | null
+          total_executed_private?: number | null
+          total_executed_value_public?: number | null
           unit?: string | null
           unit_cost?: number | null
-          year?: number | null
         }
         Update: {
           annual_amount?: number | null
           bid_funds?: string | null
+          budget_catalog_id?: string | null
           budget_code_number?: string | null
-          budget_item?: string | null
           budget_type?: string | null
-          c1?: string | null
-          c2?: string | null
-          c3?: string | null
-          cpc_code?: number | null
           created_at?: string
           department?: string | null
           detail_product?: string | null
           electronic_catalog?: string | null
-          executed_value_delete?: number | null
-          extra_values_delete?: number | null
           id?: string
           product_type?: string | null
           project_code?: string | null
@@ -2825,11 +3061,14 @@ export type Database = {
           purchase_type?: string | null
           regime_type?: string | null
           suggested_procedure?: string | null
-          total_cost?: number | null
-          total_value_delete?: number | null
+          term_c1_c2_c3?: string | null
+          total_budget_private?: number | null
+          total_budget_public?: number | null
+          total_certified_value_public?: number | null
+          total_executed_private?: number | null
+          total_executed_value_public?: number | null
           unit?: string | null
           unit_cost?: number | null
-          year?: number | null
         }
         Relationships: [
           {
@@ -2844,6 +3083,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "project"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_project_budget_code_budget_catalog_id_fkey"
+            columns: ["budget_catalog_id"]
+            isOneToOne: false
+            referencedRelation: "project_budget_catalog"
             referencedColumns: ["id"]
           }
         ]
@@ -3047,6 +3293,135 @@ export type Database = {
           weight_percentage?: number | null
         }
         Relationships: []
+      }
+      project_private_macroproject: {
+        Row: {
+          code: string | null
+          created_at: string
+          id: string
+          name: string | null
+          responsable_user_id: string | null
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          responsable_user_id?: string | null
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          responsable_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_project_private_macroproject_responsable_user_id_fkey"
+            columns: ["responsable_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      project_private_phases: {
+        Row: {
+          code: string | null
+          created_at: string
+          id: string
+          macroproject_id: string | null
+          name: string | null
+          project_id: string | null
+          responsable_user_id: string | null
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          macroproject_id?: string | null
+          name?: string | null
+          project_id?: string | null
+          responsable_user_id?: string | null
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          macroproject_id?: string | null
+          name?: string | null
+          project_id?: string | null
+          responsable_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_project_private_phases_macroproject_id_fkey"
+            columns: ["macroproject_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_macroproject"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_project_private_phases_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_project"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_project_private_phases_responsable_user_id_fkey"
+            columns: ["responsable_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      project_private_project: {
+        Row: {
+          code: string | null
+          created_at: string
+          id: string
+          macroproject_id: string | null
+          name: string | null
+          responsable_user_id: string | null
+          status: string | null
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          macroproject_id?: string | null
+          name?: string | null
+          responsable_user_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          macroproject_id?: string | null
+          name?: string | null
+          responsable_user_id?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_project_private_project_macroproject_id_fkey"
+            columns: ["macroproject_id"]
+            isOneToOne: false
+            referencedRelation: "project_private_macroproject"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_project_private_project_responsable_user_id_fkey"
+            columns: ["responsable_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       project_progress_log: {
         Row: {
@@ -3972,6 +4347,12 @@ export type Database = {
           id: string
           institution_id: string | null
           link_process: string | null
+          notif_end_contract_1: boolean | null
+          notif_end_contract_2: boolean | null
+          notif_end_contract_3: boolean | null
+          notif_end_contract_date_1: string | null
+          notif_end_contract_date_2: string | null
+          notif_end_contract_date_3: string | null
           notification_date: string | null
           other_delivery_period: string | null
           other_start_date: string | null
@@ -3981,6 +4362,7 @@ export type Database = {
           penalty: string | null
           planned_execution_budget_current_year: number | null
           planned_execution_budget_total: number | null
+          private_project_id: string | null
           progress_budget_estimated: number | null
           progress_budget_real: number | null
           progress_payments: number | null
