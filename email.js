@@ -7,6 +7,7 @@ module.exports = {
 
 async function sendEmail(data) {
   try {
+    const emails = data.participants.map((user) => {return user.email});
     const compiledFunction = pug.compileFile('emailTemplate.pug');
 	  const compiledContent = compiledFunction(data);
     let transporter = nodemailer.createTransport({
@@ -21,13 +22,11 @@ async function sendEmail(data) {
   
   
     let info = await transporter.sendMail({
-      from: process.env.USER_MAIL,
-      to: "delivered@resend.dev",
+      from: `NOREPLY ${process.env.USER_MAIL}`,
+      to: emails,
       subject: data.subject,
       html: compiledContent
     });
-
-    console.log(info);
   
     return info;
   } catch (error) {

@@ -248,11 +248,13 @@ app.get("/send-email", async (req, res) => {
     }
     for (let i = 0; i < 1; i++) {
       const contract = data[i];
-      if (!contract.notif_end_contract_1 /* && DateTime.fromISO(contract.contract_end_date).diff(DateTime.now(), "days").days <= 30 */) {
-        const { data: user, error: userError } = await supabaseResult.from("users").select().eq("id", contract.administrator_id).single();
+      const { configNotifData, configNotifError } = await supabaseResult.from("notifications_configuration").select().eq("notif_type", "Contratos").single();
+      const { participantsData, participantsError } = await supabaseResult.from("process_participants").select().eq("process_id", contract.process_id).eq("nofit_email", true);
+      const participants = participantsData.map((participant) => {return participant.id});
+      const { data: users, error: usersError } = await supabaseResult.from("users").select("email").in("id", participants);
+      if (!contract.notif_end_contract_1 /* && configNotifData.notif_check_1 && DateTime.fromISO(contract.contract_end_date).diff(DateTime.now(), "days").days <= configNotifData.notif_check_1_days */) {
         await sendEmail({
-          userEmail: user.email,
-          userName: user.display_name,
+          participants: users,
           subject: "Primera Notificación de Vencimiento de Contrato",
           diasRestantes: parseInt(DateTime.fromISO(contract.contract_end_date).diff(DateTime.now(), "days").days),
           contractNumber: contract.contract_number,
@@ -263,11 +265,9 @@ app.get("/send-email", async (req, res) => {
           throw new Error(contractUpdateError);
         } */
       }
-      if (!contract.notif_end_contract_2 && DateTime.fromISO(contract.contract_end_date).diff(DateTime.now(), "days").days <= 15) {
-        const { data: user, error: userError } = await supabaseResult.from("users").select().eq("id", contract.administrator_id).single();
+      if (!contract.notif_end_contract_2 && configNotifData.notif_check_2 && DateTime.fromISO(contract.contract_end_date).diff(DateTime.now(), "days").days <= configNotifData.notif_check_2_days) {
         await sendEmail({
-          userEmail: user.email,
-          userName: user.display_name,
+          participants: users,
           subject: "Segunda Notificación de Vencimiento de Contrato",
           diasRestantes: parseInt(DateTime.fromISO(contract.contract_end_date).diff(DateTime.now(), "days").days),
           contractNumber: contract.contract_number,
@@ -278,11 +278,9 @@ app.get("/send-email", async (req, res) => {
           throw new Error(contractUpdateError);
         } */
       }
-      if (!contract.notif_end_contract_3 && DateTime.fromISO(contract.contract_end_date).diff(DateTime.now(), "days").days <= 5) {
-        const { data: user, error: userError } = await supabaseResult.from("users").select().eq("id", contract.administrator_id).single();
+      if (!contract.notif_end_contract_3 && configNotifData.notif_check_3 && DateTime.fromISO(contract.contract_end_date).diff(DateTime.now(), "days").days <= configNotifData.notif_check_3_days) {
         await sendEmail({
-          userEmail: user.email,
-          userName: user.display_name,
+          participants: users,
           subject: "Tercera Notificación de Vencimiento de Contrato",
           diasRestantes: parseInt(DateTime.fromISO(contract.contract_end_date).diff(DateTime.now(), "days").days),
           contractNumber: contract.contract_number,
